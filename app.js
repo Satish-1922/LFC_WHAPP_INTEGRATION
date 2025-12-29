@@ -1,14 +1,6 @@
 // Import Express.js
 const express = require('express');
-
-// OPTIONAL HANA CLIENT
-let hana;
-try {
-  hana = require('@sap/hana-client');
-  console.log('HANA client loaded');
-} catch (err) {
-  console.warn('HANA client not available in this environment');
-}
+const { getConnection } = require('./hana');
 
 // Create an Express app
 const app = express();
@@ -20,7 +12,7 @@ app.use(express.json());
 const port = process.env.PORT || 3000;
 const verifyToken = process.env.VERIFY_TOKEN;
 
-// Route for GET requests
+// Route for GET requests (Webhook verification)
 app.get('/', (req, res) => {
   const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
 
@@ -32,47 +24,68 @@ app.get('/', (req, res) => {
   }
 });
 
-// Route for POST requests
+// Route for POST requests (Incoming WhatsApp events)
 app.post('/', (req, res) => {
   try {
     const entry = req.body.entry?.[0];
     const change = entry?.changes?.[0];
     const message = change?.value?.messages?.[0];
 
+    // Always acknowledge Meta
     if (!message) {
       return res.sendStatus(200);
     }
 
-    const from = message.from;
-
-    // BUTTON CLICK
+    // BUTTON CLICK EVENT
     if (message.type === 'button') {
-      const buttonText = message.button.text;
-      const buttonPayload = message.button.payload;
+      const from = message.from;              // User phone
+      const messageId = message.id;            // WhatsApp message id
+      const buttonPayload = message.button.payload; // APPROVE / REJECT
 
       console.log('User:', from);
-      console.log('Button clicked:', buttonText);
       console.log('Payload:', buttonPayload);
 
-      if (buttonPayload === 'APPROVE') {
-        console.log('✅ Document approved');
-        // TODO: Save approval to DB / trigger process
-      }
+      const action =
+        buttonPayload === 'APPROVE' ? 'APPROVED' : 'REJECTED';
 
-      if (buttonPayload === 'REJECT') {
-        console.log('❌ Document rejected');
-        // TODO: Save rejection reason / notify team
-      }
+      // --- HANA INSERT START ---
+      const conn = getConnection();
+
+      const sql = `
+        INSERT INTO WA_DOCUMENT_APPROVAL
+        (PHONE, MESSAGE_ID, ACTION, ACTION_TIME)
+        VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+      `;
+
+      conn.prepare(sql, (err, stmt) => {
+        if (err) {
+          console.error('HANA Prepare Error:', err);
+          conn.disconnect();
+          return;
+        }
+
+        stmt.exec([from, messageId, action], (err) => {
+          if (err) {
+            console.error('HANA Insert Error:', err);
+          } else {
+            console.log(`✅ Saved ${action} in HANA`);
+          }
+
+          stmt.drop();
+          conn.disconnect();
+        });
+      });
+      // --- HANA INSERT END ---
     }
 
     res.sendStatus(200);
   } catch (err) {
-    console.error(err);
+    console.error('Webhook Error:', err);
     res.sendStatus(200);
   }
 });
 
 // Start the server
 app.listen(port, () => {
-  console.log(`\nListening on port ${port}\n`);
+  console.log(`Listening on port ${port}`);
 });
