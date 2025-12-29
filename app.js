@@ -52,7 +52,7 @@ app.post('/', (req, res) => {
       const conn = getConnection();
 
       const sql = `
-        INSERT INTO WA_DOCUMENT_APPROVAL
+        INSERT INTO 2526_LIVE.WA_DOCUMENT_APPROVAL
         (PHONE, MESSAGE_ID, ACTION, ACTION_TIME)
         VALUES (?, ?, ?, CURRENT_TIMESTAMP)
       `;
