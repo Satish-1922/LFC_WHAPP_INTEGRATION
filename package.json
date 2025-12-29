@@ -6,8 +6,9 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
-  },
+  "express": "^4.19.2",
+  "@sap/hana-client": "^2.18.0"
+},
   "optionalDependencies": {
     "@sap/hana-client": "^2.27.19"
   }
