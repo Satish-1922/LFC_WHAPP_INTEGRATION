@@ -68,7 +68,7 @@ app.post('/', (req, res) => {
           if (err) {
             console.error('HANA Insert Error:', err);
           } else {
-            console.log(`✅ Saved ${action} in HANA`);
+            console.log(`Saved ${action} in HANA`);
           }
 
           stmt.drop();
