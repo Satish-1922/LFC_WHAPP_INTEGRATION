@@ -1,6 +1,15 @@
 // Import Express.js
 const express = require('express');
 
+// OPTIONAL HANA CLIENT
+let hana;
+try {
+  hana = require('@sap/hana-client');
+  console.log('HANA client loaded');
+} catch (err) {
+  console.warn('HANA client not available in this environment');
+}
+
 // Create an Express app
 const app = express();
 
