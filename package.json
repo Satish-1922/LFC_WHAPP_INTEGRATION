@@ -6,9 +6,22 @@
     "start": "node app.js"
   },
   "dependencies": {
-  "express": "^4.19.2" 
-},
+    "axios": "^1.13.2",
+    "express": "^4.19.2"
+  },
   "optionalDependencies": {
     "@sap/hana-client": "^2.27.19"
-  }
+  },
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Satish-1922/LFC_WHAPP_INTEGRATION.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Satish-1922/LFC_WHAPP_INTEGRATION/issues"
+  },
+  "homepage": "https://github.com/Satish-1922/LFC_WHAPP_INTEGRATION#readme"
 }
