@@ -47,7 +47,7 @@ app.post('/', async (req, res) => {
       console.log('User:', from);
       console.log('Button clicked:', buttonText);
       console.log('Payload:', buttonPayload);
-
+//-----------------------------------------------------------------------------------------------
       // Call your custom API if the payload is "REJECT"
       if (buttonPayload === 'REJECT') {
         console.log('Document rejected');
@@ -82,12 +82,42 @@ app.post('/', async (req, res) => {
           console.error('Error calling custom API:', error);
         }
       }
-
+ //-----------------------------------------------------------------------------------------------
       // You can handle other button payloads here if needed
       if (buttonPayload === 'APPROVE') {
-        console.log('Document approved');
-        // TODO: Save approval to DB / trigger process
+        console.log('Document Approved');
+        try {
+          // Your custom API endpoint
+          const apiUrl = 'http://localhost:5196/api/WhatsAppWebhook/webhook';
+          const requestBody = {
+            id: messageId, // Message ID from WhatsApp webhook
+            button: {
+              payload: 'APPROVE',
+            },
+          };
+
+          // Make the API call using axios
+          const response = await axios.post(apiUrl, requestBody, {
+            headers: {
+              'Accept': '*/*',
+              'Content-Type': 'application/json',
+            },
+          });
+
+          console.log('Custom API Response:', response.data);
+
+          // You can also handle the response if needed
+          if (response.status === 200) {
+            console.log('API call was successful');
+          } else {
+            console.error('API call failed with status:', response.status);
+          }
+
+        } catch (error) {
+          console.error('Error calling custom API:', error);
+        }
       }
+ //-----------------------------------------------------------------------------     
     }
 
     res.sendStatus(200);
