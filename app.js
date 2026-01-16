@@ -30,11 +30,12 @@ app.post('/', async (req, res) => {
     const entry = req.body.entry?.[0];
     const change = entry?.changes?.[0];
     const message = change?.value?.messages?.[0];
-
+   
     if (!message) {
       return res.sendStatus(200);
     }
-
+    console.log('req: ---> ', req);
+    console.log('res: ---> ', res);
     const from = message.from;
 
     // BUTTON CLICK
