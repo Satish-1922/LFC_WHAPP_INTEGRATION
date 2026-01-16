@@ -34,8 +34,6 @@ app.post('/', async (req, res) => {
     if (!message) {
       return res.sendStatus(200);
     }
-    console.log('req: ---> ', req);
-    console.log('res: ---> ', res);
     const from = message.from;
 
     // BUTTON CLICK
@@ -60,23 +58,24 @@ app.post('/', async (req, res) => {
       try {
         // Your custom API endpoint
         console.log('Url Creation Started');
-        const apiUrl = 'http://115.124.124.66:80/api/WhatsAppWebhook/webhook';
+        const apiUrl = "http://115.124.124.66/api/WhatsAppWebhook/webhook";
         const requestBody = {
-          id: "wamid.HBgMOTE5MDk2MjI2NjI3FQIAERgSQjJERTJDOTA3RjY3Nzc3RjY4AA==", // Message ID from WhatsApp webhook
+          id: "wamid.HBgMOTE5MDk2MjI3FQIAERgSQjJERTJDOTA3RjY3Nzc3RjY4AA==",
           button: {
-            payload: ApprStatus,
-          },
+            payload: ApprStatus // "REJECT" or "APPROVE"
+          }
         };
+        
         console.log('apiUrl',apiUrl);
         console.log('requestBody',requestBody);
         // Make the API call using axios
-        const response = await axios.post(apiUrl, requestBody, {
+       const response = await axios.post(apiUrl, requestBody, {
           headers: {
-            'Accept': '*/*',
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json"
           },
+          timeout: 10000 // optional but recommended
         });
-        console.log('Custom API Response:', response.data);
+        console.log('Custom API Response:-->', response.data);
 
         // You can also handle the response if needed
         if (response.status === 200) {
