@@ -43,7 +43,7 @@ app.post('/', async (req, res) => {
       const buttonText = message.button.text;
       const buttonPayload = message.button.payload;
       const messageId = message.id; // Message ID from the WhatsApp Webhook
-      const ApprStatus ="";
+      let ApprStatus ="";
       console.log('WaMsgID:', messageId);
       console.log('User:', from);
       console.log('Payload:', buttonPayload);
