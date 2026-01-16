@@ -60,7 +60,7 @@ app.post('/', async (req, res) => {
       }
       try {
         // Your custom API endpoint
-        const apiUrl = 'http://localhost:5196/api/WhatsAppWebhook/webhook';
+        const apiUrl = 'http://115.124.124.66:80/api/WhatsAppWebhook/webhook';
         const requestBody = {
           id: messageId, // Message ID from WhatsApp webhook
           button: {
