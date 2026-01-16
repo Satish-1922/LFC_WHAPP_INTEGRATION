@@ -65,17 +65,19 @@ app.post('/', async (req, res) => {
        
         // Make the API call using axios
         try{
-          console.log('API call using axios');
+          console.log('API call using axios',);
+          console.log('call at time:', new Date().toISOString().slice(11, 23));
           const response = await axios.post(apiUrl, requestBody, {
             headers: {
               "Content-Type": "application/json"
             }
           });
         console.log('Custom API Response:-->', response.data);
-
+        console.log('call at time:', new Date().toISOString().slice(11, 23));
         }catch(error)
         {
-          
+          console.log('call at time:', new Date().toISOString().slice(11, 23));
+          console.error('Error calling custom API:', error);
         }
        
         // You can also handle the response if needed
