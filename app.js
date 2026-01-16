@@ -43,10 +43,7 @@ app.post('/', async (req, res) => {
       const buttonPayload = message.button.payload;
       const messageId = message.id; // Message ID from the WhatsApp Webhook
       let ApprStatus ="";
-      //console.log('WaMsgID:', messageId);
-      //console.log('User:', from);
-      //console.log('Payload:', buttonPayload);
-
+     
       // You can handle other button payloads here if needed
       if (buttonPayload === 'Approve') 
       {
@@ -65,17 +62,22 @@ app.post('/', async (req, res) => {
             payload: ApprStatus // "REJECT" or "APPROVE"
           }
         };
-        
-        console.log('apiUrl',apiUrl);
-        console.log('requestBody',requestBody);
+       
         // Make the API call using axios
-       const response = await axios.post(apiUrl, requestBody, {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
+        try{
+          console.log('API call using axios');
+          const response = await axios.post(apiUrl, requestBody, {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          });
         console.log('Custom API Response:-->', response.data);
 
+        }catch(error)
+        {
+          
+        }
+       
         // You can also handle the response if needed
         if (response.status === 200) {
           console.log('API call was successful');
