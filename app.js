@@ -72,8 +72,7 @@ app.post('/', async (req, res) => {
        const response = await axios.post(apiUrl, requestBody, {
           headers: {
             "Content-Type": "application/json"
-          },
-          timeout: 10000 // optional but recommended
+          }
         });
         console.log('Custom API Response:-->', response.data);
 
