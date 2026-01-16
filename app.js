@@ -49,7 +49,7 @@ app.post('/', async (req, res) => {
       console.log('Payload:', buttonPayload);
 //-----------------------------------------------------------------------------------------------
       // Call your custom API if the payload is "REJECT"
-      if (buttonPayload === 'REJECT') {
+      if (buttonPayload === 'Reject') {
         console.log('Document rejected');
         try {
           // Your custom API endpoint
@@ -84,7 +84,7 @@ app.post('/', async (req, res) => {
       }
  //-----------------------------------------------------------------------------------------------
       // You can handle other button payloads here if needed
-      if (buttonPayload === 'APPROVE') {
+      if (buttonPayload === 'Approve') {
         console.log('Document Approved');
         try {
           // Your custom API endpoint
