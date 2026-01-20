@@ -52,10 +52,12 @@ app.post('/', async (req, res) => {
     }
 
     try {
+      console.log('Msg Id - ',messageId);
+      console.log('Reply Status - ',ApprStatus);
       console.log('Url Creation Started');
       const apiUrl = "http://115.124.124.66/api/WhatsAppWebhook/webhook";
       const requestBody = {
-        id: messageId,
+        id: "wamid.HBgMOTE5MDk2MjI2NjI3FQIAERgSREQyNTI2QjRFNDEzQUJCODczAA==",
         button: {
           payload: ApprStatus
         }
@@ -67,7 +69,8 @@ app.post('/', async (req, res) => {
       const response = await axios.post(apiUrl, requestBody, {
         headers: {
           "Content-Type": "application/json"
-        }
+        },
+        timeout: 10000 //10 second
       });
 
       console.log('Custom API Response:-->', response.data);
