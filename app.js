@@ -36,7 +36,11 @@ app.post('/', async (req, res) => {
 
     const messageId = message.id;
     const buttonPayload = message.button.payload;
-
+    
+    console.log('================ WHATSAPP WEBHOOK PAYLOAD ================');
+    console.log(JSON.stringify(req.body, null, 2));
+    console.log('===========================================================');
+    
     let ApprStatus = buttonPayload === 'Approve' ? 'APPROVE' : 'REJECT';
 
     console.log('Msg Id - ', messageId);
