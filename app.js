@@ -33,20 +33,18 @@ app.post('/', async (req, res) => {
     if (message.type !== 'button') {
       return res.sendStatus(200);
     }
-    const contextId =
+    const MsgId =
       req.body.entry?.[0]
         ?.changes?.[0]
         ?.value?.messages?.[0]
         ?.context?.id;
-    console.log('message ID:', contextId);
-    
     const buttonPayload = message.button.payload;    
     let ApprStatus = buttonPayload === 'Approve' ? 'APPROVE' : 'REJECT';
-    console.log('Msg Id - ', messageId);
     console.log('Reply Status - ', ApprStatus);
+    console.log('message ID:', MsgId);
     const apiUrl = "http://115.124.124.66/api/WhatsAppWebhook/webhook";
     const requestBody = {
-      id: "wamid.HBgMOTE5MDk2MjI2NjI3FQIAERgSREQyNTI2QjRFNDEzQUJCODczAA==",
+      id: MsgId,
       button: {
         payload: ApprStatus
       }
