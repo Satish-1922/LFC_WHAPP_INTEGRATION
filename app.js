@@ -27,71 +27,49 @@ app.post('/', async (req, res) => {
     const change = entry?.changes?.[0];
     const message = change?.value?.messages?.[0];
 
-    // IMPORTANT: Ignore all non-message events (statuses, delivery receipts, etc.)
     if (!message) {
       return res.sendStatus(200);
     }
 
-    // IMPORTANT: Ignore all non-button messages
     if (message.type !== 'button') {
       return res.sendStatus(200);
     }
 
-    const from = message.from;
-
-    // BUTTON CLICK
-    const buttonText = message.button.text;
-    const buttonPayload = message.button.payload;
     const messageId = message.id;
-    let ApprStatus = "";
+    const buttonPayload = message.button.payload;
 
-    if (buttonPayload === 'Approve') {
-      ApprStatus = "APPROVE";
-    } else {
-      ApprStatus = "REJECT";
-    }
+    let ApprStatus = buttonPayload === 'Approve' ? 'APPROVE' : 'REJECT';
 
-    try {
-      console.log('Msg Id - ',messageId);
-      console.log('Reply Status - ',ApprStatus);
-      console.log('Url Creation Started');
-      const apiUrl = "http://115.124.124.66/api/WhatsAppWebhook/webhook";
-      const requestBody = {
-        id: "wamid.HBgMOTE5MDk2MjI2NjI3FQIAERgSREQyNTI2QjRFNDEzQUJCODczAA==",
-        button: {
-          payload: ApprStatus
-        }
-      };
+    console.log('Msg Id - ', messageId);
+    console.log('Reply Status - ', ApprStatus);
 
-      console.log('API call using axios');
-      console.log('call at time:', new Date().toISOString().slice(11, 23));
-
-      axios.post(apiUrl, requestBody, {
-        headers: { "Content-Type": "application/json" },
-        timeout: 60000 // optional: 1 minutes
-      })
-      .then(response => {
-        console.log('SAP API completed:', response.data);
-      })
-      .catch(error => {
-        console.error('SAP API failed:', error.message);
-      });
-
-      console.log('Custom API Response:-->', response.data);
-      console.log('call at time:', new Date().toISOString().slice(11, 23));
-
-      if (response.status === 200) {
-        console.log('API call was successful');
-      } else {
-        console.error('API call failed with status:', response.status);
+    const apiUrl = "http://115.124.124.66/api/WhatsAppWebhook/webhook";
+    const requestBody = {
+      id: messageId,
+      button: {
+        payload: ApprStatus
       }
+    };
 
-    } catch (error) {
-      console.log('call at time:', new Date().toISOString().slice(11, 23));
-      console.error('Error calling custom API:', error);
-    }
+    console.log('API call using axios');
+    console.log('call at time:', new Date().toISOString().slice(11, 23));
 
+    // Fire-and-forget SAP API call
+    axios.post(apiUrl, requestBody, {
+      headers: { "Content-Type": "application/json" },
+      timeout: 60000
+    })
+    .then(response => {
+      console.log('SAP API completed successfully');
+      console.log('SAP API response:', response.data);
+    })
+    .catch(error => {
+      console.error('SAP API failed:', error.message);
+    });
+
+    // Respond to WhatsApp immediately
     res.sendStatus(200);
+
   } catch (err) {
     console.error('API ERROR -> ', err);
     res.sendStatus(200);
