@@ -66,11 +66,15 @@ app.post('/', async (req, res) => {
       console.log('API call using axios');
       console.log('call at time:', new Date().toISOString().slice(11, 23));
 
-      const response = await axios.post(apiUrl, requestBody, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        timeout: 10000 //10 second
+      axios.post(apiUrl, requestBody, {
+        headers: { "Content-Type": "application/json" },
+        timeout: 60000 // optional: 1 minutes
+      })
+      .then(response => {
+        console.log('SAP API completed:', response.data);
+      })
+      .catch(error => {
+        console.error('SAP API failed:', error.message);
       });
 
       console.log('Custom API Response:-->', response.data);
