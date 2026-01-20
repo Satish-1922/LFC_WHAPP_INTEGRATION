@@ -1,12 +1,8 @@
-// Import Express.js and axios
-const express = require('express');
-const axios = require('axios');
 
-// Create an Express app
-const app = express();
-
-// Middleware to parse JSON bodies
-app.use(express.json());
+const express = require('express'); // Import Express.js 
+const axios = require('axios'); // Import axios
+const app = express(); // Create an Express app
+app.use(express.json()); // Middleware to parse JSON bodies
 
 // Set port and verify_token
 const port = process.env.PORT || 3000;
@@ -30,70 +26,67 @@ app.post('/', async (req, res) => {
     const entry = req.body.entry?.[0];
     const change = entry?.changes?.[0];
     const message = change?.value?.messages?.[0];
-   
+
+    // IMPORTANT: Ignore all non-message events (statuses, delivery receipts, etc.)
     if (!message) {
       return res.sendStatus(200);
     }
+
+    // IMPORTANT: Ignore all non-button messages
+    if (message.type !== 'button') {
+      return res.sendStatus(200);
+    }
+
     const from = message.from;
 
     // BUTTON CLICK
-    if (message.type === 'button') 
-    {
-      const buttonText = message.button.text;
-      const buttonPayload = message.button.payload;
-      const messageId = message.id; // Message ID from the WhatsApp Webhook
-      let ApprStatus ="";
-     
-      // You can handle other button payloads here if needed
-      if (buttonPayload === 'Approve') 
-      {
-        ApprStatus = "APPROVE";
-      }else
-      {
-        ApprStatus = "REJECT";
-      }
-      try {
-        // Your custom API endpoint
-        console.log('Url Creation Started');
-        const apiUrl = "http://115.124.124.66/api/WhatsAppWebhook/webhook";
-        const requestBody = {
-          id: "wamid.HBgMOTE5MDk2MjI3FQIAERgSQjJERTJDOTA3RjY3Nzc3RjY4AA==",
-          button: {
-            payload: ApprStatus // "REJECT" or "APPROVE"
-          }
-        };
-       
-        // Make the API call using axios
-        try{
-          console.log('API call using axios',);
-          console.log('call at time:', new Date().toISOString().slice(11, 23));
-          const response = await axios.post(apiUrl, requestBody, {
-            headers: {
-              "Content-Type": "application/json"
-            }
-          });
-        console.log('Custom API Response:-->', response.data);
-        console.log('call at time:', new Date().toISOString().slice(11, 23));
-        }catch(error)
-        {
-          console.log('call at time:', new Date().toISOString().slice(11, 23));
-          console.error('Error calling custom API:', error);
-        }
-       
-        // You can also handle the response if needed
-        if (response.status === 200) {
-          console.log('API call was successful');
-        } 
-        else {
-          console.error('API call failed with status:', response.status);
-        }
-      } catch (error) {
-        console.error('Error calling custom API:', error);
-      }
+    const buttonText = message.button.text;
+    const buttonPayload = message.button.payload;
+    const messageId = message.id;
+    let ApprStatus = "";
+
+    if (buttonPayload === 'Approve') {
+      ApprStatus = "APPROVE";
+    } else {
+      ApprStatus = "REJECT";
     }
+
+    try {
+      console.log('Url Creation Started');
+      const apiUrl = "http://115.124.124.66/api/WhatsAppWebhook/webhook";
+      const requestBody = {
+        id: messageId,
+        button: {
+          payload: ApprStatus
+        }
+      };
+
+      console.log('API call using axios');
+      console.log('call at time:', new Date().toISOString().slice(11, 23));
+
+      const response = await axios.post(apiUrl, requestBody, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      console.log('Custom API Response:-->', response.data);
+      console.log('call at time:', new Date().toISOString().slice(11, 23));
+
+      if (response.status === 200) {
+        console.log('API call was successful');
+      } else {
+        console.error('API call failed with status:', response.status);
+      }
+
+    } catch (error) {
+      console.log('call at time:', new Date().toISOString().slice(11, 23));
+      console.error('Error calling custom API:', error);
+    }
+
     res.sendStatus(200);
   } catch (err) {
-    console.error('API ERROR -> ',err);
+    console.error('API ERROR -> ', err);
     res.sendStatus(200);
   }
 });
